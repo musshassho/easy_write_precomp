@@ -1,0 +1,48 @@
+#! C:/Program Files/Nuke10.5v5/nuke-10.5.5.dll -nx
+#write_info BOB file:"" format:"1998 1124 1" chans:":rgba.red:rgba.green:rgba.blue:rgba.alpha:GradingMask.alpha:GradingMask.blue:GradingMask.green:GradingMask.red:regrain_matte.red:" framerange:"1585195 1585269" fps:"24" colorspace:"default (linear)" datatype:"16 bit half" transfer:"unknown" views:"main" timecode:"18:20:52:11" colorManagement:"Nuke"
+version 10.5 v5
+Gizmo {
+ tile_color 0x52ffff
+ label "element: \[value fname] "
+ note_font "Verdana Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+ note_font_size 15
+ note_font_color 0xfff8f8ff
+ addUserKnob {20 User}
+ addUserKnob {41 channels T BOB.channels}
+ addUserKnob {26 ""}
+ addUserKnob {41 fformat l format T BOB.fformat}
+ addUserKnob {41 fname l element T BOB.fname}
+ addUserKnob {26 ""}
+ addUserKnob {41 version_1 l version t "NOTE YOU ARE RENDERING THE PREVIOUS VERSION UNTIL YOU SET_PATH FOR THIS ONE VERSION!" T BOB.version_1}
+ addUserKnob {41 file l file_path t "THIS PATH WILL NOT BE DINAMICALLY UPDATED, YOU HAVE TU SET_PATH TO MAKE IT WORK. " T BOB.file}
+ addUserKnob {26 ""}
+ addUserKnob {22 setpath l INVISIBLE -STARTLINE +INVISIBLE T "def from_script_to_precomp_path():\n    \n    script_path_norm = os.path.normpath(nuke.root()\[\"name\"].value())\n    precomp_path = script_path_norm.replace(\"work\",\"renders\")\n    seq_name = precomp_path.split(\"\\\\\")\[8]\n    shot_name = precomp_path.split(\"\\\\\")\[9]\n    shot = seq_name + \"_\" + shot_name \n    padding = 6 * \"#\"\n    n = nuke.thisNode()\n    name = n\[\"fname\"].value()\t\n    extension =n\[\"fformat\"].value()\n\n    final_path = (\"\\\\\").join(precomp_path.split(\"\\\\\")\[:11]) + \"\\\\\" + \"precomp\" + \"\\\\\" + shot + \"_\" + name + \"\\\\\" +  shot + \"_\" + name + \".\" + padding +  \".\" + extension\n    final_path1 = final_path.replace(\"\\\\\",\"/\")\n    \n    nuke.thisNode()\[\"file\"].setValue(final_path1)\n\n    return final_path1\n\nfrom_script_to_precomp_path()"}
+ addUserKnob {26 first l "" +STARTLINE T "first set path, then render"}
+ addUserKnob {41 set_path T BOB.set_path}
+ addUserKnob {41 Render -STARTLINE T BOB.Render}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 172
+  ypos -125
+ }
+ Write {
+  channels all
+  file_type exr
+  version 46
+  name BOB
+  xpos 172
+  ypos -61
+  addUserKnob {20 User}
+  addUserKnob {1 version_1 l version t "NOTE YOU ARE RENDERING THE PREVIOUS VERSION UNTIL YOU SET_PATH FOR THIS ONE VERSION!\t\t\t" -STARTLINE}
+  addUserKnob {1 fname l element}
+  addUserKnob {4 fformat l format M {exr jpeg tga "" ""}}
+  addUserKnob {22 set_path -STARTLINE T "reload(easy_write_precomp)\neasy_write_precomp.from_script_to_precomp_path()"}
+ }
+ Output {
+  name Output1
+  xpos 172
+  ypos 15
+ }
+end_group
